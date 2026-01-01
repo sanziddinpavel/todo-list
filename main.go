@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
@@ -10,6 +12,72 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTodos(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "Please give me GET request", 400)
+		return
+	}
+	encoder := json.NewEncoder(w)
+	encoder.Encode(Todolist)
+
+}
+
+func createTodos(w http.ResponseWriter, r *http.Request) {
+
+	var NewTodos Todos
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&NewTodos)
+
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Please give me valid json", 400)
+		return
+
+	}
+
+	NewTodos.ID = len(Todolist) + 1
+	Todolist = append(Todolist, NewTodos)
+
+	incoder := json.NewEncoder(w)
+	incoder.Encode(NewTodos)
+
+}
+
+func deleteTodos(w http.ResponseWriter, r *http.Request) {
+	todoID := r.PathValue("id")
+	tID, err := strconv.Atoi(todoID)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "invalid product id", 400)
+		return
+	}
+
+	for i, todo := range Todolist {
+		if todo.ID == tID {
+			Todolist = append(Todolist[:i], Todolist[i+1:]...)
+			http.Error(w, "todo deleted", 200)
+		}
+
+	}
+
+}
+func updateTodos(w http.ResponseWriter, r *http.Request) {
+	todoID := r.PathValue("id")
+	tID, err := strconv.Atoi(todoID)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "invalid product id", 400)
+		return
+	}
+
+	for _, todo := range Todolist {
+		if todo.ID == tID {
+
+			http.Error(w, "todo", 200)
+			return
+		}
+		http.Error(w, "todo pai ni", 400)
+
+	}
 
 }
 
@@ -20,6 +88,7 @@ func main() {
 	mux.Handle("GET /todos", http.HandlerFunc(getTodos))
 	mux.Handle("POST /todos", http.HandlerFunc(createTodos))
 	mux.Handle("GET /todos/{id}", http.HandlerFunc(getTodos))
+
 	mux.Handle("PUT /todos/{id}", http.HandlerFunc(updateTodos))
 	mux.Handle("DELETE /todos/{id}", http.HandlerFunc(deleteTodos))
 
