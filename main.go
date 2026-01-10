@@ -2,16 +2,37 @@ package main
 
 import (
 	"Todo-list/handler"
+	"Todo-list/middleware"
 	"fmt"
 	"net/http"
 )
 
 func main() {
 	mux := http.NewServeMux()
-	mux.Handle("GET /hello", http.HandlerFunc(handler.HelloHandler))
 
-	mux.Handle("GET /todos", http.HandlerFunc(handler.GetTodos))
+	mux.Handle(
+		"GET /hello",
+		middleware.Preflight(
+			middleware.CorsMiddleware(
+				middleware.Logger(
+					http.HandlerFunc(handler.HelloHandler),
+				),
+			),
+		),
+	)
+
+	mux.Handle("GET /todos",
+		middleware.Preflight(
+			middleware.CorsMiddleware(
+				middleware.Logger(
+					http.HandlerFunc(handler.GetTodos),
+				),
+			),
+		),
+	)
+
 	mux.Handle("POST /todos", http.HandlerFunc(handler.CreateTodos))
+
 	mux.Handle("GET /todos/{id}", http.HandlerFunc(handler.GetTodo))
 
 	mux.Handle("PUT /todos/{id}", http.HandlerFunc(handler.UpdateTodos))
