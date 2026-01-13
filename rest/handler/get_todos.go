@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"Todo-list/todo"
+	"Todo-list/database"
 	"Todo-list/util"
 	"net/http"
 )
@@ -11,7 +11,7 @@ func GetTodos(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Please give me GET request", 400)
 		return
 	}
-	util.SendData(w, todo.Todolist, 200)
+	util.SendData(w, database.List(), 200)
 
 	// encoder := json.NewEncoder(w)
 	// encoder.Encode(Todolist)

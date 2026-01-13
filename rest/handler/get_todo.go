@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"Todo-list/todo"
+	"Todo-list/database"
 	"Todo-list/util"
 	"net/http"
 	"strconv"
@@ -14,14 +14,16 @@ func GetTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "please give me valid id", 400)
 		return
 	}
-	for _, t := range todo.Todolist {
-		if t.ID == id {
-			util.SendData(w, t, 200)
+	product := database.Get(id)
+	if product == nil {
+		util.SendError(w, 404, "Product not find")
 
-			// encode := json.NewEncoder(w)
-			// encode.Encode(todo)
-			return
-
-		}
 	}
+
+	util.SendData(w, product, 200)
+
+	// encode := json.NewEncoder(w)
+	// encode.Encode(todo)
+	return
+
 }

@@ -1,13 +1,14 @@
 package handler
 
 import (
-	"Todo-list/todo"
+	"Todo-list/database"
+	"Todo-list/util"
 	"fmt"
 	"net/http"
 	"strconv"
 )
 
-func UpdateTodos(w http.ResponseWriter, r *http.Request) {
+func DeleteTodos(w http.ResponseWriter, r *http.Request) {
 	todoID := r.PathValue("id")
 	tID, err := strconv.Atoi(todoID)
 	if err != nil {
@@ -15,13 +16,7 @@ func UpdateTodos(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid product id", 400)
 		return
 	}
+	database.Delete(tID)
 
-	for _, todo := range todo.Todolist {
-		if todo.ID == tID {
-
-		}
-		http.Error(w, "todo pai ni", 400)
-
-	}
-
+	util.SendData(w, "successfully deleted", http.StatusOK)
 }

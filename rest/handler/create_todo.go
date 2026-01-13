@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"Todo-list/todo"
+	"Todo-list/database"
 	"Todo-list/util"
 	"encoding/json"
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 func CreateTodos(w http.ResponseWriter, r *http.Request) {
 
-	var NewTodos todo.Todos
+	var NewTodos database.Todos
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&NewTodos)
 
@@ -21,9 +21,9 @@ func CreateTodos(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	NewTodos.ID = len(todo.Todolist) + 1
-	todo.Todolist = append(todo.Todolist, NewTodos)
-	util.SendData(w, NewTodos, 200)
+	createdTodo := database.Store(NewTodos)
+
+	util.SendData(w, createdTodo, 200)
 	// incoder := json.NewEncoder(w)
 	// incoder.Encode(NewTodos)
 

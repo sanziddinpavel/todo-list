@@ -1,8 +1,8 @@
-package cmd
+package rest
 
 import (
-	"Todo-list/handler"
-	"Todo-list/middleware"
+	"Todo-list/rest/handler"
+	"Todo-list/rest/middleware"
 	"net/http"
 )
 
