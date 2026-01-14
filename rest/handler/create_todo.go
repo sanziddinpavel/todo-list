@@ -24,7 +24,5 @@ func CreateTodos(w http.ResponseWriter, r *http.Request) {
 	createdTodo := database.Store(NewTodos)
 
 	util.SendData(w, createdTodo, 200)
-	// incoder := json.NewEncoder(w)
-	// incoder.Encode(NewTodos)
-
+	
 }
