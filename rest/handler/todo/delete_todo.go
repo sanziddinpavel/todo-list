@@ -1,4 +1,4 @@
-package handler
+package todo
 
 import (
 	"Todo-list/database"
@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func DeleteTodos(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) DeleteTodos(w http.ResponseWriter, r *http.Request) {
 	todoID := r.PathValue("id")
 	tID, err := strconv.Atoi(todoID)
 	if err != nil {

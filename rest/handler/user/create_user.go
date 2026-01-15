@@ -1,4 +1,4 @@
-package handler
+package user
 
 import (
 	"Todo-list/database"
@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var NewUsers database.User
 	decoder := json.NewDecoder(r.Body)

@@ -1,4 +1,4 @@
-package handler
+package todo
 
 import (
 	"Todo-list/database"
@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func CreateTodos(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateTodos(w http.ResponseWriter, r *http.Request) {
 
 	var NewTodos database.Todos
 	decoder := json.NewDecoder(r.Body)
@@ -24,5 +24,5 @@ func CreateTodos(w http.ResponseWriter, r *http.Request) {
 	createdTodo := database.Store(NewTodos)
 
 	util.SendData(w, createdTodo, 200)
-	
+
 }

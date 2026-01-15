@@ -1,4 +1,4 @@
-package handler
+package todo
 
 import (
 	"Todo-list/database"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func GetTodos(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetTodos(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		http.Error(w, "Please give me GET request", 400)
 		return

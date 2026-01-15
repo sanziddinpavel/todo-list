@@ -1,4 +1,4 @@
-package handler
+package todo
 
 import (
 	"Todo-list/database"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func GetTodo(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetTodo(w http.ResponseWriter, r *http.Request) {
 	tId := r.PathValue("id")
 	id, err := strconv.Atoi(tId)
 	if err != nil {

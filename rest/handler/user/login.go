@@ -1,4 +1,4 @@
-package handler
+package user
 
 import (
 	"Todo-list/config"
@@ -14,7 +14,7 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	var reqLogin LoginRequest
 	decoder := json.NewDecoder(r.Body)
