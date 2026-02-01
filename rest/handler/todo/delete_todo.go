@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"Todo-list/database"
 	"Todo-list/util"
 	"fmt"
 	"net/http"
@@ -16,7 +15,11 @@ func (h *Handler) DeleteTodos(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid product id", 400)
 		return
 	}
-	database.Delete(tID)
+	err = h.todoRepo.Delete(tID)
+	if err != nil {
+		http.Error(w, "Internal server Error", http.StatusInternalServerError)
+		return
+	}
 
 	util.SendData(w, "successfully deleted", http.StatusOK)
 }

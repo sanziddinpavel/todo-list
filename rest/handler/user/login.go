@@ -1,8 +1,6 @@
 package user
 
 import (
-	"Todo-list/config"
-	"Todo-list/database"
 	"Todo-list/util"
 	"encoding/json"
 	"fmt"
@@ -16,29 +14,27 @@ type LoginRequest struct {
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
-	var reqLogin LoginRequest
+	var req LoginRequest
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&reqLogin)
+	err := decoder.Decode(&req)
 
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "invalid request data", http.StatusBadRequest)
+		util.SendError(w, http.StatusBadRequest, "invalid request data")
 		return
 
 	}
 
-	user := database.Find(reqLogin.Email, reqLogin.Password)
-
-	if user == nil {
-		http.Error(w, "user not found", http.StatusNotFound)
+	usr, err := h.userRepo.Find(req.Email, req.Password)
+	if usr == nil {
+		util.SendError(w, http.StatusBadRequest, "unauthorized")
 		return
 	}
 
-	cnf := config.GetConfig()
-	accessToken, err := util.CreateJwt(cnf.JwtSecretKey, util.Payload{
-		ID:        user.ID,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
+	accessToken, err := util.CreateJwt(h.cnf.JwtSecretKey, util.Payload{
+		ID:        usr.ID,
+		FirstName: usr.FirstName,
+		LastName:  usr.LastName,
 	})
 	if err != nil {
 		http.Error(w, "failed to create jwt", http.StatusInternalServerError)

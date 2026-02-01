@@ -1,28 +1,45 @@
 package user
 
 import (
-	"Todo-list/database"
+	"Todo-list/repo"
 	"Todo-list/util"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
+type ReqCreateUser struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	IsDone    bool   `json:"is_done"`
+}
+
 func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
-	var NewUsers database.User
+	var req ReqCreateUser
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&NewUsers)
+	err := decoder.Decode(&req)
 
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "invalid request data", http.StatusBadRequest)
+		util.SendError(w, http.StatusBadRequest, "invalid request data")
+
 		return
 
 	}
+	usr, err := h.userRepo.Create(repo.User{
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Email:     req.Email,
+		Password:  req.Password,
+		IsDone:    req.IsDone,
+	})
+	if err != nil {
+		util.SendError(w, http.StatusInternalServerError, "Internal Server Error")
+	}
 
-	createdUser := NewUsers.Store()
-
-	util.SendData(w, createdUser, http.StatusCreated)
+	util.SendData(w, usr, http.StatusCreated)
 
 }

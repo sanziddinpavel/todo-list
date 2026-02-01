@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"Todo-list/database"
 	"Todo-list/util"
 	"net/http"
 	"strconv"
@@ -14,7 +13,10 @@ func (h *Handler) GetTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "please give me valid id", 400)
 		return
 	}
-	product := database.Get(id)
+	product, err := h.todoRepo.Get(id)
+	if err != nil {
+		http.Error(w, "Give me a valid todo id", http.StatusInternalServerError)
+	}
 	if product == nil {
 		util.SendError(w, 404, "Product not find")
 

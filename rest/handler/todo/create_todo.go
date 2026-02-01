@@ -1,18 +1,24 @@
 package todo
 
 import (
-	"Todo-list/database"
+	"Todo-list/repo"
 	"Todo-list/util"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
+type ReqCreateTodo struct {
+	Text        string `json:"text"`
+	Description string `json:"description"`
+	IsDone      bool   `json:"isDone"`
+}
+
 func (h *Handler) CreateTodos(w http.ResponseWriter, r *http.Request) {
 
-	var NewTodos database.Todos
+	var req ReqCreateTodo
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&NewTodos)
+	err := decoder.Decode(&req)
 
 	if err != nil {
 		fmt.Println(err)
@@ -21,8 +27,15 @@ func (h *Handler) CreateTodos(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	createdTodo := database.Store(NewTodos)
+	createdTodo, err := h.todoRepo.Create(repo.Todos{
+		Text:        req.Text,
+		Description: req.Description,
+		IsDone:      req.IsDone,
+	})
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+	}
 
-	util.SendData(w, createdTodo, 200)
+	util.SendData(w, createdTodo, http.StatusCreated)
 
 }
