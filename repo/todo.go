@@ -1,10 +1,16 @@
 package repo
 
+import (
+	"database/sql"
+
+	"github.com/jmoiron/sqlx"
+)
+
 type Todos struct {
-	ID          int    `json:"id"`
-	Text        string `json:"text"`
-	Description string `json:"description"`
-	IsDone      bool   `json:"isDone"`
+	ID          int    `db:"id" json:"id"`
+	Text        string `db:"text" json:"text"`
+	Description string `db:"description" json:"description"`
+	IsDone      bool   `db:"is_done" json:"is_done"`
 }
 
 type TodoRepo interface {
@@ -16,79 +22,107 @@ type TodoRepo interface {
 }
 
 type todoRepo struct {
-	todoList []*Todos
+	db *sqlx.DB
 }
 
-func NewTodoRepo() TodoRepo {
-	repo := &todoRepo{}
-	generateInitTodos(repo)
-	return repo
+func NewTodoRepo(db *sqlx.DB) TodoRepo {
+	return &todoRepo{
+		db: db,
+	}
+
 }
 
 func (r *todoRepo) Create(t Todos) (*Todos, error) {
-	t.ID = len(r.todoList) + 1
-	r.todoList = append(r.todoList, &t)
-	return &t, nil
+	query := `
 
+	INSERT INTO todos(
+	text,
+	description,
+	is_done
+
+	)VALUES(
+	$1,
+	$2,
+	$3
+	)
+	RETURNING id
+	`
+	row := r.db.QueryRow(query, t.Text, t.Description, t.IsDone)
+	err := row.Scan(&t.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
 }
 
-func (r *todoRepo) Get(todoID int) (*Todos, error) {
-	for _, todo := range r.todoList {
-		if todo.ID == todoID {
-			return todo, nil
+func (r *todoRepo) Get(id int) (*Todos, error) {
+	var td Todos
+	query := `
+	SELECT 
+	id,
+	text,
+	description,
+	is_done
+	from todos
+	where id = $1
+	`
+	err := r.db.Get(&td, query, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
 		}
+		return nil, nil
 	}
-	return nil, nil
 
+	return &td, nil
 }
 
 func (r *todoRepo) List() ([]*Todos, error) {
+	var tdList []*Todos
+	query := `
+	SELECT 
+	id,
+	text,
+	description,
+	is_done
+	from todos
+	
+	`
+	err := r.db.Select(&tdList, query)
+	if err != nil {
 
-	return r.todoList, nil
+		return nil, nil
+	}
+
+	return tdList, nil
 
 }
 
-func (r *todoRepo) Delete(todoID int) error {
-	var tempList []*Todos
-	for _, t := range r.todoList {
-		if t.ID != todoID {
-			tempList = append(tempList, t)
-		}
+func (r *todoRepo) Delete(id int) error {
+	query := `
+		DELETE FROM todos WHERE id=$1
+	`
+	_, err := r.db.Exec(query, id)
+	if err != nil {
+		return err
+
 	}
-	r.todoList = tempList
 	return nil
 }
 
-func (r *todoRepo) Update(todo Todos) (*Todos, error) {
-	for idx, t := range r.todoList {
-		if t.ID == t.ID {
-			r.todoList[idx] = &todo
-		}
+func (r *todoRepo) Update(t Todos) (*Todos, error) {
+	query := `
+UPDATE todos
+SET text=$1,
+	description=$2,
+	is_done=$3
+	WHERE id =$4
+`
+	row := r.db.QueryRow(query, t.Text, t.Description, t.IsDone)
+	err := row.Err()
+	if err != nil {
+		return nil, err
 	}
-	return &todo, nil
+	return &t, nil
 
-}
-
-func generateInitTodos(t *todoRepo) {
-
-	todo1 := &Todos{
-		ID:          1,
-		Text:        "Mango",
-		Description: "I need 2 k.g mangoes",
-		IsDone:      true,
-	}
-	todo2 := &Todos{
-		ID:          2,
-		Text:        "potato",
-		Description: " i need 3 k.g potatoes",
-		IsDone:      true,
-	}
-	todo3 := &Todos{
-		ID:          3,
-		Text:        "Notebook",
-		Description: "I need 2 Notebooks",
-		IsDone:      true,
-	}
-
-	t.todoList = append(t.todoList, todo1, todo2, todo3)
 }
