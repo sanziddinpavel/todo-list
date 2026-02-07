@@ -21,6 +21,12 @@ func Serve() {
 		os.Exit(1)
 	}
 
+	err = db.MigrateDB(dbcon, "./migrations")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	middlewares := middleware.NewMiddleware(cnf)
 
 	todoRepo := repo.NewTodoRepo(dbcon)
