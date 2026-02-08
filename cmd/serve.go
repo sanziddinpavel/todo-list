@@ -5,9 +5,10 @@ import (
 	"Todo-list/infra/db"
 	"Todo-list/repo"
 	"Todo-list/rest"
-	"Todo-list/rest/handler/todo"
-	"Todo-list/rest/handler/user"
+	todoHandler "Todo-list/rest/handler/todo"
+	userHandler "Todo-list/rest/handler/user"
 	"Todo-list/rest/middleware"
+	"Todo-list/user"
 	"fmt"
 	"os"
 )
@@ -27,13 +28,15 @@ func Serve() {
 		os.Exit(1)
 	}
 
+	todoRepo := repo.NewTodoRepo(dbcon)
+	userRepo := repo.NewUserRepo(dbcon)
+
+	usrSvc := user.NewService(&userRepo)
+
 	middlewares := middleware.NewMiddleware(cnf)
 
-	todoRepo := repo.NewTodoRepo(dbcon)
-	todoHandler := todo.NewHandler(middlewares, todoRepo)
-
-	userRepo := repo.NewUserRepo(dbcon)
-	userHandler := user.NewHandler(cnf, &userRepo)
+	todoHandler := todoHandler.NewHandler(middlewares, todoRepo)
+	userHandler := userHandler.NewHandler(cnf, usrSvc)
 
 	server := rest.NewServer(cnf, todoHandler, userHandler)
 	server.Start()

@@ -1,7 +1,7 @@
 package user
 
 import (
-	"Todo-list/repo"
+	"Todo-list/domain"
 	"Todo-list/util"
 	"encoding/json"
 	"fmt"
@@ -29,7 +29,7 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-	usr, err := h.userRepo.Create(repo.User{
+	usr, err := h.svc.Create(domain.User{
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 		Email:     req.Email,

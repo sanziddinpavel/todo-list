@@ -1,24 +1,16 @@
 package repo
 
 import (
+	"Todo-list/domain"
+	"Todo-list/user"
 	"database/sql"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
 
-type User struct {
-	ID        int    `db:"id" json:"id"`
-	FirstName string `db:"first_name" json:"first_name"`
-	LastName  string `db:"last_name" json:"last_name"`
-	Email     string `db:"email" json:"email"`
-	Password  string `db:"password" json:"password"`
-	IsDone    bool   `db:"is_done" json:"is_done"`
-}
-
 type UserRepo interface {
-	Create(user User) (*User, error)
-	Find(email, password string) (*User, error)
+	user.UserRepo
 }
 
 type userRepo struct {
@@ -32,7 +24,7 @@ func NewUserRepo(db *sqlx.DB) userRepo {
 
 }
 
-func (r *userRepo) Create(user User) (*User, error) {
+func (r *userRepo) Create(user domain.User) (*domain.User, error) {
 	query := `
 		INSERT INTO users (
 			first_name, 
@@ -63,8 +55,8 @@ func (r *userRepo) Create(user User) (*User, error) {
 
 }
 
-func (r *userRepo) Find(email, pass string) (*User, error) {
-	var user User
+func (r *userRepo) Find(email, pass string) (*domain.User, error) {
+	var user domain.User
 
 	query := `
 		SELECT id, 
