@@ -13,7 +13,7 @@ func (h *Handler) GetTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "please give me valid id", 400)
 		return
 	}
-	product, err := h.todoRepo.Get(id)
+	product, err := h.svc.Get(id)
 	if err != nil {
 		http.Error(w, "Give me a valid todo id", http.StatusInternalServerError)
 	}

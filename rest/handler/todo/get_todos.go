@@ -6,7 +6,7 @@ import (
 )
 
 func (h *Handler) GetTodos(w http.ResponseWriter, r *http.Request) {
-	todoList, err := h.todoRepo.List()
+	todoList, err := h.svc.List()
 	if err != nil {
 		util.SendError(w, http.StatusInternalServerError, "internal server error")
 		return

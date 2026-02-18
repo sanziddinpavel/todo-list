@@ -1,7 +1,7 @@
 package todo
 
 import (
-	"Todo-list/repo"
+	"Todo-list/domain"
 	"Todo-list/util"
 	"encoding/json"
 	"fmt"
@@ -27,7 +27,7 @@ func (h *Handler) CreateTodos(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	createdTodo, err := h.todoRepo.Create(repo.Todos{
+	createdTodo, err := h.svc.Create(domain.Todos{
 		Text:        req.Text,
 		Description: req.Description,
 		IsDone:      req.IsDone,

@@ -1,22 +1,21 @@
 package todo
 
 import (
-	"Todo-list/repo"
 	"Todo-list/rest/middleware"
 )
 
 type Handler struct {
 	middlewares *middleware.Middlewares
-	todoRepo    repo.TodoRepo
+	svc         Service
 }
 
 func NewHandler(
 	middlewares *middleware.Middlewares,
-	todoRepo repo.TodoRepo,
+	svc Service,
 ) *Handler {
 	return &Handler{
 		middlewares: middlewares,
-		todoRepo:    todoRepo,
+		svc:         svc,
 	}
 
 }

@@ -1,7 +1,7 @@
 package todo
 
 import (
-	"Todo-list/repo"
+	"Todo-list/domain"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -15,7 +15,7 @@ func (h *Handler) UpdateTodos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var todo repo.Todos
+	var todo domain.Todos
 	if err := json.NewDecoder(r.Body).Decode(&todo); err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
@@ -24,7 +24,7 @@ func (h *Handler) UpdateTodos(w http.ResponseWriter, r *http.Request) {
 
 	todo.ID = id
 
-	if _, err := h.todoRepo.Update(todo); err != nil {
+	if _, err := h.svc.Update(todo); err != nil {
 		http.Error(w, "failed to update todo", http.StatusInternalServerError)
 		return
 	}

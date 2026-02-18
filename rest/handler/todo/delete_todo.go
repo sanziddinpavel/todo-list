@@ -15,7 +15,7 @@ func (h *Handler) DeleteTodos(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid product id", 400)
 		return
 	}
-	err = h.todoRepo.Delete(tID)
+	err = h.svc.Delete(tID)
 	if err != nil {
 		http.Error(w, "Internal server Error", http.StatusInternalServerError)
 		return

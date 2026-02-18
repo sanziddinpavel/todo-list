@@ -1,24 +1,16 @@
 package repo
 
 import (
+	"Todo-list/domain"
 	"database/sql"
+
+	"Todo-list/todo"
 
 	"github.com/jmoiron/sqlx"
 )
 
-type Todos struct {
-	ID          int    `db:"id" json:"id"`
-	Text        string `db:"text" json:"text"`
-	Description string `db:"description" json:"description"`
-	IsDone      bool   `db:"is_done" json:"is_done"`
-}
-
 type TodoRepo interface {
-	Create(t Todos) (*Todos, error)
-	Get(todoID int) (*Todos, error)
-	List() ([]*Todos, error)
-	Delete(todoID int) error
-	Update(t Todos) (*Todos, error)
+	todo.TodoRepo
 }
 
 type todoRepo struct {
@@ -32,7 +24,7 @@ func NewTodoRepo(db *sqlx.DB) TodoRepo {
 
 }
 
-func (r *todoRepo) Create(t Todos) (*Todos, error) {
+func (r *todoRepo) Create(t domain.Todos) (*domain.Todos, error) {
 	query := `
 
 	INSERT INTO todos(
@@ -55,8 +47,8 @@ func (r *todoRepo) Create(t Todos) (*Todos, error) {
 	return &t, nil
 }
 
-func (r *todoRepo) Get(id int) (*Todos, error) {
-	var td Todos
+func (r *todoRepo) Get(id int) (*domain.Todos, error) {
+	var td domain.Todos
 	query := `
 	SELECT 
 	id,
@@ -77,8 +69,8 @@ func (r *todoRepo) Get(id int) (*Todos, error) {
 	return &td, nil
 }
 
-func (r *todoRepo) List() ([]*Todos, error) {
-	var tdList []*Todos
+func (r *todoRepo) List() ([]*domain.Todos, error) {
+	var tdList []*domain.Todos
 	query := `
 	SELECT 
 	id,
@@ -110,7 +102,7 @@ func (r *todoRepo) Delete(id int) error {
 	return nil
 }
 
-func (r *todoRepo) Update(t Todos) (*Todos, error) {
+func (r *todoRepo) Update(t domain.Todos) (*domain.Todos, error) {
 	query := `
 UPDATE todos
 SET text=$1,
@@ -118,7 +110,7 @@ SET text=$1,
 	is_done=$3
 	WHERE id =$4
 `
-	row := r.db.QueryRow(query, t.Text, t.Description, t.IsDone)
+	row := r.db.QueryRow(query, t.Text, t.Description, t.IsDone, t.ID)
 	err := row.Err()
 	if err != nil {
 		return nil, err
