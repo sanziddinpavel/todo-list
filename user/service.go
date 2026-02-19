@@ -27,12 +27,5 @@ func (svc *service) Create(user domain.User) (*domain.User, error) {
 }
 
 func (svc *service) Find(email string, pass string) (*domain.User, error) {
-	usr, err := svc.usrRepo.Find(email, pass)
-	if err != nil {
-		return nil, err
-	}
-	if usr == nil {
-		return nil, nil
-	}
-	return nil, nil
+	return svc.usrRepo.Find(email, pass)
 }

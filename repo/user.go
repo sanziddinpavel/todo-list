@@ -71,6 +71,7 @@ func (r *userRepo) Find(email, pass string) (*domain.User, error) {
 	`
 
 	err := r.db.Get(&user, query, email, pass)
+
 	if err != nil {
 		// sql.ErrNoRows means user not found
 		if err == sql.ErrNoRows {

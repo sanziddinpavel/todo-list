@@ -26,6 +26,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	usr, err := h.svc.Find(req.Email, req.Password)
+
 	if usr == nil {
 		util.SendError(w, http.StatusBadRequest, "unauthorized")
 		return
