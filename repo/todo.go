@@ -69,7 +69,9 @@ func (r *todoRepo) Get(id int) (*domain.Todos, error) {
 	return &td, nil
 }
 
-func (r *todoRepo) List() ([]*domain.Todos, error) {
+func (r *todoRepo) List(page, limit int64) ([]*domain.Todos, error) {
+
+	offset := ((page - 1) * limit) + 1
 	var tdList []*domain.Todos
 	query := `
 	SELECT 
@@ -78,15 +80,32 @@ func (r *todoRepo) List() ([]*domain.Todos, error) {
 	description,
 	is_done
 	from todos
-	
+	LIMIT $1 OFFSET $2
 	`
-	err := r.db.Select(&tdList, query)
+	err := r.db.Select(&tdList, query, page, offset)
 	if err != nil {
 
 		return nil, nil
 	}
 
 	return tdList, nil
+
+}
+func (r *todoRepo) Count() (int64, error) {
+
+	query := `
+	SELECT COUNT(*)
+	FROM todos
+	
+	`
+	var count int64
+	err := r.db.QueryRow(query).Scan(&count)
+	if err != nil {
+
+		return 0, err
+	}
+
+	return count, nil
 
 }
 
