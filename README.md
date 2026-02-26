@@ -4,16 +4,16 @@ A RESTful API for managing todos and users, built with **Go** and **PostgreSQL**
 
 ## Features
 
-- **User Authentication** — Registration and login with custom HMAC-SHA256 JWT implementation
-- **Todo CRUD** — Create, read (single + paginated list), update, and delete todos
-- **Paginated Responses** — List endpoints return structured pagination metadata (page, limit, totalItems, totalPages)
-- **Automatic Migrations** — Schema management via `rubenv/sql-migrate`, applied on startup
-- **Custom Middleware Chain** — Composable middleware manager supporting global and per-route middlewares
-  - **Logger** — Request logging
-  - **CORS** — Cross-Origin Resource Sharing headers
-  - **Preflight** — OPTIONS preflight handling
-  - **JWT Auth** — Token verification on protected routes
-- **Environment Configuration** — `.env`-based config with strict validation via `joho/godotenv`
+- **User Authentication** - Registration and login with custom HMAC-SHA256 JWT implementation
+- **Todo CRUD** - Create, read (single + paginated list), update, and delete todos
+- **Paginated Responses** - List endpoints return structured pagination metadata (page, limit, totalItems, totalPages)
+- **Automatic Migrations** - Schema management via `rubenv/sql-migrate`, applied on startup
+- **Custom Middleware Chain** - Composable middleware manager supporting global and per-route middlewares
+  - **Logger** - Request logging
+  - **CORS** - Cross-Origin Resource Sharing headers
+  - **Preflight** - OPTIONS preflight handling
+  - **JWT Auth** - Token verification on protected routes
+- **Environment Configuration** - `.env`-based config with strict validation via `joho/godotenv`
 
 ## Tech Stack
 
